@@ -73,7 +73,7 @@ poll_and_read_usbport(int poll_flag, int8_t* poll_number, int disp_flag)
                                 close(fd);
                                 return -1;
                         }
-                        char c = (char) ('0' + &poll_number);
+                        char c = (char) ('0' + *poll_number);
                         int n = write(fd, &c, 1);
                         if (n < 0) {
                                 perror("write()");

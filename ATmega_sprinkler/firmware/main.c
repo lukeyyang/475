@@ -268,19 +268,22 @@ main()
                 prev_val = rot_a;
                 */
 
-                /* we only accept zones 1 through 8 */
+                /* we only accept zones 1 through 8, 0 to turn off */
                 char zone_write_buf[17];
-                if (zone_char >= '1' && zone_char <= '8') {
+                if (zone_char >= '0' && zone_char <= '8') {
                         snprintf(zone_write_buf, 
                                         17, 
                                         "Current Zone: %c\r\n", 
                                         zone_char);
                         usart_out(zone_write_buf);
                         _delay_ms(200);
-                        uint8_t zone_onehot 
-                                = (uint8_t) (1 << (zone_char - '1'));
-                        shift_write(zone_onehot);
-                        zone_reg = (uint8_t) (zone_char - '0');
+                        if (zone_char > '0') {
+                                uint8_t zone_onehot 
+                                        = (uint8_t) (1 << (zone_char - '1'));
+                                shift_write(zone_onehot);
+                        } else {
+                                shift_write(0);
+                        }
                 } else {
                         snprintf(zone_write_buf,
                                         17,

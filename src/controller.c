@@ -18,7 +18,7 @@
 #define POLL_FIRST    1
 
 const static char* kUSB_PORT = "/dev/ttyUSB0";
-const static char* kLOG_FILE = "~/Desktop/ee459/runtime/sprinkler.log";
+const static char* kLOG_FILE = "/home/pi/Desktop/ee459/runtime/sprinkler.log";
 const static int kWAIT_SECOND = 1;
 static volatile int running = 1;
 
@@ -108,6 +108,12 @@ poll_and_read_usbport(int poll_flag, int8_t* poll_number, int disp_flag)
 
                 /* first, append timestamp to log */
                 FILE* logfd = fopen(kLOG_FILE, "a");
+                if (!logfd) {
+                        perror("fopen()");
+                        close(fd);
+                        return -1;
+                }
+                
                 fprintf(logfd, "%s: ", dt);
 
                 /* pull bytes from read buffer */

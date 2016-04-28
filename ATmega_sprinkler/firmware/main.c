@@ -8,6 +8,7 @@
 #include <math.h>
 #include <stdio.h>
 
+#define CtoF(x)  ( lround(1.8 * x) + 32 )
 
 /* ******************
  * TEMPERATURE SENSOR
@@ -233,6 +234,7 @@ main()
         /* main loop
          * every cycle, read at the beginning, write at the end
          * */
+        uint8_t zone_reg = 0;
         while (1) {
                 int temperature = get_temperature();
                 int moisture = get_moisture();
@@ -242,8 +244,8 @@ main()
                 char temp_write_buf[36];
                 snprintf(temp_write_buf, 
                                 36, 
-                                "Temp: %d, Moisture: %d\r\n",
-                                temperature, 
+                                "Temp: %ld F, Moisture: %d, ",
+                                CtoF(temperature),
                                 moisture);
                 usart_out(temp_write_buf);
 
@@ -267,17 +269,24 @@ main()
                 */
 
                 /* we only accept zones 1 through 8 */
+                char zone_write_buf[17];
                 if (zone_char >= '1' && zone_char <= '8') {
-                        char zone_write_buf[17];
                         snprintf(zone_write_buf, 
                                         17, 
                                         "Current Zone: %c\r\n", 
                                         zone_char);
                         usart_out(zone_write_buf);
                         _delay_ms(200);
-                        uint8_t zone = (uint8_t) (1 << (zone_char - '1'));
-                        shift_write(zone);
+                        uint8_t zone_onehot 
+                                = (uint8_t) (1 << (zone_char - '1'));
+                        shift_write(zone_onehot);
+                        zone_reg = (uint8_t) (zone_char - '0');
                 } else {
+                        snprintf(zone_write_buf,
+                                        17,
+                                        "Current Zone: %c\r\n",
+                                        (char) (zone_reg + '0'));
+                        usart_out(zone_write_buf);
                         _delay_ms(200);
                 }
         }

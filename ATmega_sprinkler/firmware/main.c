@@ -281,7 +281,11 @@ main()
                                 uint8_t zone_onehot 
                                         = (uint8_t) (1 << (zone_char - '1'));
                                 shift_write(zone_onehot);
+                                zone_reg = (uint8_t) (zone_char - '0');
                         } else {
+                                if (zone_char == '0') {
+                                        zone_reg = 0;
+                                }
                                 shift_write(0);
                         }
                 } else {

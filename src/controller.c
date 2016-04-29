@@ -142,7 +142,7 @@ poll_and_read_usbport(int poll_flag, int8_t* poll_number, int disp_flag)
 int
 get_status()
 {
-        int8_t zone_num = 0;
+        int8_t zone_num = 10; /* some illegal value */
         int rt = poll_and_read_usbport(POLL_FIRST, &zone_num, LOG_AND_PRINT);
         return rt;
 }
@@ -151,11 +151,12 @@ int
 set_zone()
 {
         /* get an input from user */
-        fprintf(stdout, "Which zone would you like to turn on? [1-8]\n");
+        fprintf(stdout, "Which zone would you like to activate?\n"\
+                        "[0-8] 0 to turn off\n");
         
         int8_t zone_num = -1;
         scanf("%hhd", &zone_num);
-        if (!(zone_num > 0 && zone_num < 9)) {
+        if (!(zone_num >= 0 && zone_num < 9)) {
                 fprintf(stderr, "Invalid input. Returning...\n");
                 return -1;
         }
